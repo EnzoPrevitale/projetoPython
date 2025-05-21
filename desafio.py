@@ -1,0 +1,5 @@
+jogos = ['GTA VI', 'Elden Ring', 'Resident Evil 4', 'GTA: San Andreas']
+precos = [500, 300, 300, 100]
+em_estoque = [25, 10, 12, 23]
+preco_fabrica = [450, 250, 250, 80]
+vendar = [320, ]
