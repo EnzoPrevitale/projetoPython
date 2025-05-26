@@ -1,5 +1,5 @@
 import pygame
-from settings import WIDTH, HEIGHT
+from settings import WIDTH, HEIGHT, SCALE
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -26,12 +26,12 @@ class Player(pygame.sprite.Sprite):
 
         if self.y <= 0:
             self.y = 0
-        if self.y >= HEIGHT - self.rect.height:
-            self.y = HEIGHT - self.rect.height
+        if self.y >= HEIGHT * SCALE - self.rect.height:
+            self.y = HEIGHT * SCALE - self.rect.height
         if self.x <= 0:
             self.x = 0
-        if self.x >= WIDTH - self.rect.width:
-            self.x = WIDTH - self.rect.width
+        if self.x >= WIDTH * SCALE - self.rect.width:
+            self.x = WIDTH * SCALE - self.rect.width
 
         self.rect.x = self.x
         self.rect.y = self.y

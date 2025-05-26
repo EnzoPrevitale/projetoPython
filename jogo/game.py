@@ -1,49 +1,35 @@
 import pygame
+from camera_jogo import Camera
 
 from jogo.world import World
 from player import Player
-from settings import HEIGHT, WIDTH, FPS
+from settings import HEIGHT, WIDTH, FPS, SCALE, tilemap
 
-tilemap = [
-    [1, 0, 0, 1, 1, 0],
-    [0, 1, 0, 0, 1, 1],
-    [0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0],
-    [1, 0, 0, 0, 0, 0],
-    [1, 0, 0, 1, 1, 0],
-    [0, 1, 0, 0, 1, 1],
-    [0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0],
-    [1, 0, 0, 0, 0, 0],
-    [1, 0, 0, 1, 1, 0],
-    [0, 1, 0, 0, 1, 1],
-    [0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0],
-    [1, 0, 0, 0, 0, 0],
-]
 
 class Game:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        self.screen = pygame.display.set_mode((WIDTH * SCALE, HEIGHT * SCALE))
         pygame.display.set_caption("Loja de Games")
         self.clock = pygame.time.Clock()
         self.running = True
         self.sprites = pygame.sprite.Group()
         self.player = Player(500, 500)
         self.sprites.add(self.player)
-        self.world = World(len(tilemap[0]), len(tilemap))
+        self.world = World(tilemap.get_width(), tilemap.get_height())
+        self.camera = Camera(tilemap.get_width(), tilemap.get_height())
 
 
     def render(self):
-        self.world.generate_world(tilemap, self.screen)
         self.screen.fill("#ffffff")
-        self.sprites.draw(self.screen)
+        self.world.generate_world(tilemap, self.screen)
+        self.sprites.draw(self.screen, Camera.apply())
         pygame.display.flip()
 
 
     def tick(self):
         self.render()
+        self.camera.update(self.player)
         self.player.tick(pygame.key.get_pressed())
 
 
