@@ -1,5 +1,47 @@
 import sqlite3
 import pandas as pd
+import hashlib
+
+def encode(text):
+    text_bytes = text.encode('utf-8')
+    encoded_text = hashlib.sha256(text_bytes)
+    return encoded_text.hexdigest()
+
+
+def cadastrar(db):
+    data = pd.read_sql("SELECT * FROM usuarios", conexao)
+    nome_valido = True
+    username = input("Digite o seu nome de usuário: ")
+    for i in data["username"]:
+        if username == i:
+            print("O nome de usuário já está sendo utilizado.")
+            nome_valido = False
+    while not nome_valido:
+        username = input("Digite o seu nome de usuário: ")
+        for i in data["username"]:
+            if username == i:
+                print("O nome de usuário já está sendo utilizado.")
+                nome_valido = False
+        nome_valido = True
+    password = input("Digite a sua senha: ")
+    confirm_password = input("Confirme a sua senha: ")
+    while confirm_password != password:
+        password = input("Senhas não coincidem. Digite a senha novamente: ")
+        confirm_password = input("Confirme a sua senha: ")
+    db.execute(f"""INSERT INTO usuarios (username, password, type) VALUES ('{username}', '{encode(password)}', 'ADM')""")
+    conexao.commit()
+
+
+def validar(db):
+    data = pd.read_sql("SELECT * FROM usuarios", conexao)
+    username = input("Digite o seu nome de usuário: ")
+    password = encode(input("Digite a sua senha: "))
+    if password == data[data["username"] == username]["password"].iloc[0]:
+        print("Acesso concedido.")
+        return True
+    else:
+        print("Nome de usuário ou senha estão incorretos.")
+        return False
 
 
 def ver_jogos(db):
@@ -69,6 +111,16 @@ controle = pd.read_sql("SELECT * FROM controle", conexao)
 caixa = ((controle['preco'] * controle['vendas']).sum() - (controle['preco_fabrica'] * controle['aquisicoes_estoque']).sum()).round(2)
 
 while True:
+    validacao = False
+    while not validacao:
+        print("Deseja fazer login ou cadastrar-se? ")
+        print("[1] Fazer Login | [2] Cadastrar-se")
+        opcao_login = int(input("Selecione uma ação: "))
+        if opcao_login == 1:
+            validacao = validar(cursor)
+        elif opcao_login == 2:
+            cadastrar(cursor)
+            validacao = validar(cursor)
     print("Cybergames 2077")
     print(f"Valor em caixa: R${caixa}")
     print("[1] Adicionar jogos | [2] Remover jogos | [3] Registrar venda | [4] Compra de estoque | [5] Resumo da loja | [6] Sair")
