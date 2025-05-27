@@ -1,10 +1,11 @@
 import pygame
-from camera_jogo import Camera
+from game_camera import Camera
 
 from jogo.world import World
 from player import Player
-from settings import HEIGHT, WIDTH, FPS, SCALE, tilemap
+from settings import HEIGHT, WIDTH, FPS, SCALE
 
+tilemap = pygame.image.load('res/map.png')
 
 class Game:
     def __init__(self):
@@ -22,8 +23,10 @@ class Game:
 
     def render(self):
         self.screen.fill("#ffffff")
-        self.world.generate_world(tilemap, self.screen)
-        self.sprites.draw(self.screen, Camera.apply())
+        self.world.generate_world(tilemap, self.screen, self.camera)
+
+        for sprite in self.sprites:
+            self.screen.blit(sprite.image, self.camera.apply(sprite.rect))
         pygame.display.flip()
 
 

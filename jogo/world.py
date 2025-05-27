@@ -1,5 +1,5 @@
 import pygame
-from camera_jogo import Camera
+from game_camera import Camera
 from settings import WIDTH, HEIGHT, WORLD_TILE_SIZE, SCALE
 
 
@@ -20,12 +20,11 @@ class World:
             "#ffffff": self.tile_wall,
         }
 
-    def generate_world(self, tilemap, scr):
-        for row in range(tilemap.get_width()):
-            for col in range(tilemap.get_height()):
+    def generate_world(self, tilemap, scr, camera):
+        for row in range(tilemap.get_height()):
+            for col in range(tilemap.get_width()):
                 tile = rgba_to_hex(tilemap.get_at((row, col)))
                 tile_image = self.tile_images[tile]
-                x = col * WORLD_TILE_SIZE * SCALE - Camera.offset.x
-                y = col * WORLD_TILE_SIZE * SCALE - Camera.offset.y
-
+                x = row * WORLD_TILE_SIZE * SCALE - camera.offset.x
+                y = col * WORLD_TILE_SIZE * SCALE - camera.offset.y
                 scr.blit(tile_image, (x, y))
